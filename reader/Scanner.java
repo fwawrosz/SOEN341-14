@@ -11,20 +11,20 @@ import token.TokenType;
 public class Scanner implements IScanner {
 	
 	private static final int EOF = -1;
-	private StringBuilder mnemonic;
-	private ArrayList<String> mnemonicList;
+	private StringBuilder tokenName;
 	private ArrayList<Token> tokenList;
-	private boolean ignorecomment = false;	//flag that determines whether we're in a comment, i.e. whether to ignore everything past a certain point
-	private Position pos = new Position();	//variable keeping track of current position
+	private boolean inside_comment = false;	//flag that determines whether we're in a comment, i.e. whether to ignore everything past a certain point
+	private Position pos;	//variable keeping track of current position
 	
 	public int getEOF() {return Scanner.EOF;}
 	
 	private void createMnemonicList(FileInputStream reader){
 		
 		int i;
-		this.mnemonic = new StringBuilder();
-		this.mnemonicList = new ArrayList<String>();
+		this.tokenName = new StringBuilder();
 		this.tokenList = new ArrayList<Token>();	//sequence of tokens, which will be used by the parser
+		pos = new Position();
+		boolean is_mnemonic = false;
 		
 		try {
 			
@@ -34,10 +34,46 @@ public class Scanner implements IScanner {
 				//check first character to determine whether we have a label
 				if (pos.getColumnNumber() == 0)
 				{
+					
+					if((char) i == ';' || inside_comment) {
+						
+						//if end of comment
+						if((char) i == '\n') {
+							inside_comment = false;
+							
+							pos.resetColumnNumber();
+													
+							//Add comment from beginning of line to the tokenList
+							tokenList.add(new Token(new Position(pos.getLineNumber(),0), this.tokenName.toString(), TokenType.Comment));
+							
+							this.tokenName.setLength(0);
+							
+							//add EOL at end of line
+							tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL?", TokenType.EOL));
+							pos.incLineNumber();
+							
+						}else {
+							//if comment is in first column, save it all
+							inside_comment = true;
+							if((char) i != '\n') {
+								this.tokenName.append((char) i);	
+							}
+						}
+						continue;
+					}
+					
+					if((char) i == '\n' && !inside_comment) {
+						
+						//add EOL at end of line
+						tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL", TokenType.EOL));
+						pos.incLineNumber();	//we're going to the next line
+						continue;	//move on, nothing else to do
+					}
+					
 					//if it's a whitespace, there's no label
 					if((char) i == ' ' || (char) i == '\t')
 					{
-						pos.incLineNumber();	//we're going to the next line
+						pos.incColumnNumber();	//we're going to the next line
 						continue;	//move on, nothing else to do
 					}
 					
@@ -48,129 +84,88 @@ public class Scanner implements IScanner {
 					//if it's anything else (number, etc.), it's probably an error
 					else {}		//report error; not coded yet
 				}
-				
-				//determine what to do based on characters
-				//skip whitespaces
-				if((char) i == ' ' || (char) i == '\t')
-				{
-					pos.incColumnNumber();
-					continue;	//move on, nothing else to do
-				}
-				
-				
-				//check for a semicolon to start the beginning of a comment
-				else if ((char)i == ';')
-				{
-					pos.incColumnNumber();
-					ignorecomment = true;
-				}
-				
-
-				//when a newline is encountered
-				else if ((char)i == '\n')
-				
-				{
 					
-					//it's the end of the comment, if there was one; don't ignore text anymore
-					ignorecomment = false;	
+				if((char)i == ';' || ((char)i == '\n' && !inside_comment)) {
 					
 					//the next character will be the first character of a line
 					pos.resetColumnNumber();
 					
 					//this might need to be reformatted/moved later on,
 					//as mnemonics will not be at line ends
-					mnemonicList.add(this.mnemonic.toString());
+					if(!this.tokenName.isEmpty()) {
+		
+						//add mnemonic to the token list
+						this.tokenList.add(new Token(new Position(pos.getLineNumber(),0),this.tokenName.toString(),TokenType.Mnemonic));
+						
+					}
 					
-					//add an EOL token since it's the end of a line
-					//tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL", TokenType.EOL));
-					this.mnemonic.setLength(0);
+					this.tokenName.setLength(0);	
 					
+					if((char)i == '\n') {
+						//add EOL at end of line
+						tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL", TokenType.EOL));
+						pos.incLineNumber();
+					}
 				}
 				
-				//if we're after a semicolon, but before a newline, ignore the character since it's a comment
-				else if (ignorecomment)
-				{
-					pos.incColumnNumber();
-					continue;
-				}
-				
-				
-				else if(Character.isLetter((char) i))
-				{
-					this.mnemonic.append((char) i);
-				}
-				
-				
-				//for numbers-- do nothing yet
-				else if ( Character.isDigit((char)i) )	{  }
-				
-				//for dots-- do nothing yet
-				else if ((char)i == '.')				{  }
-				
-				
-				
-				
-				//--------------Beginning of old/obsoleted code--------------
-				/*
-				//skip whitespaces
-				if((char) i == ' ' || (char) i == '\t') { continue; }
 				
 				//check for a semicolon to start the beginning of a comment
-				else if ((char)i == ';')				{ ignorecomment = true; }
-				
-				//when a newline is encountered
-				else if ((char)i == '\n')
-				
+				if ((char)i == ';' || inside_comment)
 				{
-					//it's the end of comment, don't ignore anymore
-					ignorecomment = false;	
+					if((char)i == ';') {
+						pos.incColumnNumber();
+						inside_comment = true;
+						this.tokenName.append((char) i);
+					}
 					
-					//the next character will be the first character of a line
-					firstchar = true;
+					else if((char)i == '\n') {
+						inside_comment = false;
+						pos.resetColumnNumber();
+						
+						//add comment from end of line to token list
+						this.tokenList.add(new Token(new Position(pos.getLineNumber(),0), this.tokenName.toString(), TokenType.Comment));
+						
+						this.tokenName.setLength(0);
+						
+						
+						//add EOL at end of line
+						tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL", TokenType.EOL));
+						pos.incLineNumber();
+					}
 					
-					//this might need to be reformatted/moved later on,
-					//as mnemonics will not be at line ends
-					mnemonicList.add(this.mnemonic.toString());
-					this.mnemonic.setLength(0);
-					
+					else {
+						if((char)i != '\n') {
+							this.tokenName.append((char) i);
+						}
+					}
 				}
 				
-				//if we're after a semicolon, but before a newline, ignore the character since it's a comment
-				else if (ignorecomment)					{ continue; }
-				
-				else if(Character.isLetter((char) i))
+				//determine what to do based on characters
+				//skip whitespaces
+				else if(((char) i == ' ' || (char) i == '\t'))
 				{
-					this.mnemonic.append((char) i);
+					is_mnemonic = false;
+					pos.incColumnNumber();
+					continue;	//move on, nothing else to do
 				}
-
+								
+				else if(Character.isLetter((char) i) || is_mnemonic)
+				{
+					is_mnemonic = true;
+					this.tokenName.append((char) i);
+				}
+				
+				
 				//for numbers-- do nothing yet
-				else if ( Character.isDigit((char)i) )	{  }
+				else if ( Character.isDigit((char)i) )	{ } 
 				
 				//for dots-- do nothing yet
-				else if ((char)i == '.')				{  }
-				*/
+				else if ((char)i == '.')				{ } 
 				
-				
-				//old code
-				/*
-				if((char) i != ' ' || (char) i != '\t') {
-
-					if((char) i == '\n') {
-						mnemonicList.add(this.mnemonic.toString());
-						this.mnemonic.setLength(0);
-					}
-					if(Character.isLetter((char) i))
-					{
-						this.mnemonic.append((char) i);
-					}
-				}
-				*/
-					
-				//-----------------End of old/obsoleted code-----------------	
 			}
 			
 			//add an EOF token since we're done with the file
-			//tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOF", TokenType.EOF));
+			tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOF", TokenType.EOF));
 			
 		} catch (IOException e) {
 			System.out.println("Could not read the file");
@@ -179,33 +174,15 @@ public class Scanner implements IScanner {
 	}
 	
 	
-	
-	public ArrayList<String> getMnemonicList() { //should set this to private
+	private void createTokenList(){
 		
 		SrcReader readFile = new SrcReader();
 		createMnemonicList(readFile.ReadSourceFile("TestImmediate.asm"));
 		readFile.closeStream();
-		return this.mnemonicList;
 		
 	}
 	
-	private void createTokenList(){
-		
-		this.tokenList = new ArrayList<Token>();
-		this.getMnemonicList();
-		
-		for(int i = 0; i< this.mnemonicList.size(); i++) {
-			this.tokenList.add(new Token(new Position(i+1, 0),this.mnemonicList.get(i),TokenType.Mnemonic));
-			//add an EOL token since it's the end of a line
-			tokenList.add(new Token(new Position(i+1, pos.getColumnNumber()), "EOL", TokenType.EOL));
-		}
-		
-		//add an EOF token since we're done with the file
-		tokenList.add(new Token(new Position(this.mnemonicList.size()+1, pos.getColumnNumber()), "EOF", TokenType.EOF));
-		
-	}
-	
-	public ArrayList<Token> getTokenList(){ //should set this to private
+	private ArrayList<Token> getTokenList(){ //should set this to private
 		this.createTokenList();
 		return this.tokenList;
 	}
@@ -218,25 +195,7 @@ public class Scanner implements IScanner {
 		return this.getTokenList().size();
 	}
 	
-	/*
-	public Token getTokenRecursively(int size) {
-		
-		if(size == this.getNumberOfToken()) {
-			size-=1;
-		}
-		
-		if(size == 0) {
-			System.out.println(this.getTokenAt(size));
-			return this.getTokenAt(size);
-		}
-		
-		
-		this.getTokenRecursively(--size);
-		System.out.println(this.getTokenAt(++size));
-		return this.getTokenAt(size);
-				
-	}
-	*/
+
 	
 	
 	

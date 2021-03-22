@@ -26,12 +26,6 @@ class TestJunit {
 	}
 	
 	@Test
-	void scannerMnemonic() {
-		//Test scanner mnemonic list
-		assertEquals(new Scanner().getMnemonicList().toString(), "[halt, pop, dup, exit, ret, not, and, or, xor, neg, inc, dec, add, sub, mul, div, rem, shl, shr, teq, tne, tlt, tgt, tle, tge, halt]");
-	}
-	
-	@Test
 	void scannerToken() {
 		//Test Scanners Token List
 		assertEquals(new Scanner().getTokenAt(0).toString(),"[halt(1,0)=Mnemonic]");
