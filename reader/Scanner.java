@@ -43,6 +43,7 @@ public class Scanner implements IScanner {
 				if (pos.getColumnNumber() == 0)
 				{
 					
+					//inside a comment
 					if((char) i == ';' || inside_comment) {
 						
 						//if end of comment
@@ -52,15 +53,21 @@ public class Scanner implements IScanner {
 							pos.resetColumnNumber();
 													
 							//Add comment from beginning of line to the tokenList
-							tokenList.add(new Token(new Position(pos.getLineNumber(),0), this.tokenName.toString(), TokenType.Comment));
+							tokenList.add(new Token(new Position(pos.getLineNumber(), this.pos.getColumnNumber()), this.tokenName.toString(), TokenType.Comment));
 							
 							this.tokenName.setLength(0);
 							
 							//add EOL at end of line
-							tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL?", TokenType.EOL));
+							tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL", TokenType.EOL));
 							pos.incLineNumber();
 							
 						}else {
+							
+							//first time inside comment
+							if((char) i == ';' && !inside_comment){
+								//pos.incColumnNumber();
+							}
+							
 							//if comment is in first column, save it all
 							inside_comment = true;
 							if((char) i != '\n') {
@@ -70,8 +77,10 @@ public class Scanner implements IScanner {
 						continue;
 					}
 					
+					//empty line
 					if((char) i == '\n' && !inside_comment) {
 						
+						this.pos.resetColumnNumber();
 						//add EOL at end of line
 						tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL", TokenType.EOL));
 						pos.incLineNumber();	//we're going to the next line
@@ -93,17 +102,16 @@ public class Scanner implements IScanner {
 					else { errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), 0), "Invalid character.")); }		//report error
 				}
 					
-				if((char)i == ';' || ((char)i == '\n' && !inside_comment)) {
+				if(((char)i == '\n' && !inside_comment)) {
 					
-					//the next character will be the first character of a line
-					pos.resetColumnNumber();
+					
 					
 					//this might need to be reformatted/moved later on,
 					//as mnemonics will not be at line ends
 					if(this.tokenName.length()!=0) {
 		
 						//add mnemonic to the token list
-						this.tokenList.add(new Token(new Position(pos.getLineNumber(),0),this.tokenName.toString(),TokenType.Mnemonic));
+						this.tokenList.add(new Token(new Position(pos.getLineNumber(),pos.getColumnNumber()),this.tokenName.toString(),TokenType.Mnemonic));
 						
 					}
 					
@@ -114,24 +122,28 @@ public class Scanner implements IScanner {
 						tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL", TokenType.EOL));
 						pos.incLineNumber();
 					}
+					
+					//the next character will be the first character of a line
+					pos.resetColumnNumber();
 				}
 				
 				
 				//check for a semicolon to start the beginning of a comment
 				if ((char)i == ';' || inside_comment)
 				{
-					if((char)i == ';') {
-						pos.incColumnNumber();
+					//first time entering comment
+					if((char)i == ';' && !inside_comment) {
+						//pos.incColumnNumber();
 						inside_comment = true;
 						this.tokenName.append((char) i);
 					}
 					
 					else if((char)i == '\n') {
 						inside_comment = false;
-						pos.resetColumnNumber();
+						
 						
 						//add comment from end of line to token list
-						this.tokenList.add(new Token(new Position(pos.getLineNumber(),0), this.tokenName.toString(), TokenType.Comment));
+						this.tokenList.add(new Token(new Position(pos.getLineNumber(),pos.getColumnNumber()), this.tokenName.toString(), TokenType.Comment));
 						
 						this.tokenName.setLength(0);
 						
@@ -139,6 +151,7 @@ public class Scanner implements IScanner {
 						//add EOL at end of line
 						tokenList.add(new Token(new Position(pos.getLineNumber(), pos.getColumnNumber()), "EOL", TokenType.EOL));
 						pos.incLineNumber();
+						pos.resetColumnNumber();
 					}
 					
 					else {
@@ -158,20 +171,23 @@ public class Scanner implements IScanner {
 						//add mnemonic to the token list
 						if(is_mnemonic)
 						{
-							this.tokenList.add(new Token(new Position(pos.getLineNumber(),0),this.tokenName.toString(),TokenType.Mnemonic));
+							this.tokenList.add(new Token(new Position(pos.getLineNumber(),pos.getColumnNumber()),this.tokenName.toString(),TokenType.Mnemonic));
+							pos.incColumnNumber();
 						}
 						
 						if(is_number)
 						{
-							this.tokenList.add(new Token(new Position(pos.getLineNumber(),0),this.tokenName.toString(),TokenType.Number));
+							this.tokenList.add(new Token(new Position(pos.getLineNumber(),pos.getColumnNumber()),this.tokenName.toString(),TokenType.Number));
+							pos.incColumnNumber();
 						}
 						
 						if(is_directive)
 						{
-							this.tokenList.add(new Token(new Position(pos.getLineNumber(),0),this.tokenName.toString(),TokenType.Directive));
+							this.tokenList.add(new Token(new Position(pos.getLineNumber(),pos.getColumnNumber()),this.tokenName.toString(),TokenType.Directive));
+							pos.incColumnNumber();
 							if (!this.tokenName.equals(".cstring"))
 							{
-								errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), 0), "Invalid character."));
+								errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), pos.getColumnNumber()), "Invalid character."));
 							}
 						}
 					}
@@ -183,7 +199,6 @@ public class Scanner implements IScanner {
 					is_number = false;
 					is_directive = false;
 					
-					pos.incColumnNumber();
 					continue;	//move on, nothing else to do
 				}
 								
@@ -216,7 +231,7 @@ public class Scanner implements IScanner {
 					if(is_directiveoperand)
 					{
 						this.tokenName.append((char) i);
-						this.tokenList.add(new Token(new Position(pos.getLineNumber(),0),this.tokenName.toString(),TokenType.DirectiveString));
+						this.tokenList.add(new Token(new Position(pos.getLineNumber(),pos.getColumnNumber()),this.tokenName.toString(),TokenType.DirectiveString));
 						this.tokenName.setLength(0);
 						is_directiveoperand = false;
 						continue;
@@ -231,7 +246,7 @@ public class Scanner implements IScanner {
 				//check for EOL in the string
 				else if (((char)i == '\n' || (char)i == '\r') && is_directiveoperand)
 				{
-					errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), 0), "End of Line detected inside a string."));
+					errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), pos.getColumnNumber()), "End of Line detected inside a string."));
 				}
 				
 				//we can append anything in a string (might need extra check for 8-bit ASCII)
@@ -241,7 +256,7 @@ public class Scanner implements IScanner {
 				}
 				
 				//for any other character, it's probably invalid
-				else { errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), 0), "Invalid character.")); }
+				else { errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), pos.getColumnNumber()), "Invalid character.")); }
 			}
 			
 			//add an EOF token since we're done with the file
@@ -250,7 +265,7 @@ public class Scanner implements IScanner {
 			//by this point, the file has ended and we've broken out of the while loop, so if is_directiveoperand is not false, that means the string got interrupted
 			if(is_directiveoperand)
 			{
-				errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), 0), "End of File detected inside a string."));
+				errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), pos.getColumnNumber()), "End of File detected inside a string."));
 			}
 			
 		} catch (IOException e) {
