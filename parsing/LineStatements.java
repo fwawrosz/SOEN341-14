@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import token.Position;
 import token.Token;
 import token.TokenType;
-import SymbolTable.Symbol;
+import symbolTable.Symbol;
 import reader.Scanner;
 
 

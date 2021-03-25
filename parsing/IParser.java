@@ -8,7 +8,7 @@ import token.TokenType;
 import java.util.ArrayList;
 import java.util.List;
 
-import SymbolTable.Symbol;
+import symbolTable.Symbol;
 import reader.Scanner;
 
 public interface IParser{

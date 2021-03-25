@@ -8,7 +8,7 @@ import java.util.List;
 import token.Mnemonic;
 import token.Token;
 import token.TokenType;
-import SymbolTable.Symbol;
+import symbolTable.Symbol;
 import errorReporting.ErrorMessage;
 import errorReporting.ErrorReporter;
 import java.util.Hashtable;
@@ -44,13 +44,8 @@ private void ParseThis(Token currentToken){
 			case Mnemonic:
 				linestatement.setMnemonic(currentToken);
 				if(ht.get(currentToken.getName()) == null) {
-					if(scr.getTokenAt(counter2++).getCode() == TokenType.LabelOperand) {						
-						linestatement.setOperand(scr.getTokenAt(counter2));
-						if(scr.getTokenAt(counter2++).getCode() == TokenType.Number) {
-							linestatement.setNumber(scr.getTokenAt(counter2));
-						}else {
-							errrep.record(new ErrorMessage("This immediate instruction must have a valid number operand"));
-						}
+					if(scr.getTokenAt(++counter2).getCode() == TokenType.Number) {
+						linestatement.setNumber(scr.getTokenAt(counter2));
 					}else {
 						errrep.record(new ErrorMessage("This immediate instruction must have an operand field."));
 					}
@@ -65,8 +60,11 @@ private void ParseThis(Token currentToken){
 				break;				
 			case Directive:
 				linestatement.setDirective(currentToken);
+				break;
 			case EOL:
-				InterR.add(linestatement);			
+				InterR.add(linestatement);
+				linestatement = new LineStatements();
+				break;
 		}		
 
 }
