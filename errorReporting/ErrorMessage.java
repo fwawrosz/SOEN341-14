@@ -20,6 +20,10 @@ public class ErrorMessage {
 		filename = f;
 	}
 	
+	public ErrorMessage(String m) {
+		msg=m;
+	}
+	
 	public String toString()
 	{
 		return (filename + ": Error: Line: " + pos.getLineNumber() + " - " + msg);

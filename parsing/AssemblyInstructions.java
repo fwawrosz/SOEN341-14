@@ -9,7 +9,7 @@ import token.Mnemonic;
 import token.Position;
 import token.Token;
 import token.TokenType;
-import symbolTable.Symbol;
+import SymbolTable.Symbol;
 
 import reader.Scanner;
 
