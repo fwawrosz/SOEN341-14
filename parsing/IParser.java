@@ -13,7 +13,8 @@ import reader.Scanner;
 
 public interface IParser{
 
-	List<String> ParseThis(ArrayList<Token> currenntTokens);
+	private void ParseThis(Token currenntToken) {
+	}
 
-
+	public List<LineStatements> ParseFile();
 }
