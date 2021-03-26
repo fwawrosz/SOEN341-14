@@ -1,0 +1,11 @@
+13 March 2021
+Epic 7: Generate listing file
+Create immediate instruction formatter - not started
+
+24 March 2021
+Epic 7: Generate listing file
+Create immediate instruction formatter - in progress by Aydin.
+
+25 March 2021
+Epic 7: Generate listing file
+Create immediate instruction formatter - done by Aydin.

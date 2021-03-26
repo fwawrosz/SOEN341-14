@@ -1,0 +1,27 @@
+13 March 2021
+Epic 3: Scan characters to extract and create tokens - In Progress
+Keep track of position. - In progress by Farouk, Omar
+Scan comments. - In progress by Farouk, Omar
+Scan numbers. - not done
+Report scanner errors.  - not done
+
+21 March 2021
+Epic 3: Scan characters to extract and create tokens - In Progress
+Keep track of position. - Done by Farouk, Omar
+Scan comments. - Done by Farouk, Omar
+Scan numbers. - In progress by Ryan
+Report scanner errors.  - In progress by Ryan
+
+22 March 2021
+Epic 3: Scan characters to extract and create tokens - Done
+Keep track of position. - Done by Farouk, Omar
+Scan comments. - Done by Farouk, Omar
+Scan numbers. - Done by Ryan
+Report scanner errors.  - Done by Ryan
+
+24 March 2021
+Epic 3: Scan characters to extract and create tokens - Done
+Keep track of position. - Done by Farouk, Omar
+Scan comments. - Done by Farouk, Omar
+Scan numbers. - Done by Ryan (fixed negative number oversight)
+Report scanner errors.  - Done by Ryan

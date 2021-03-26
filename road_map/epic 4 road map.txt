@@ -1,0 +1,17 @@
+13 March 2021
+Epic 4: Parse tokens and generate IR.
+Parse instruction - not done
+Determine addressing mode - not done
+Report errors - not done
+Parse immediate instruction - not done
+Parse directive - not done
+Parse comment - not done
+
+24 March 2021
+Epic 4: Parse tokens and generate IR.
+Parse instruction - done by Khoi, Sofiya, Hoomaan.
+Determine addressing mode - done by Khoi, Sofiya, Hoomaan.
+Report errors - done by Khoi, Sofiya, Hoomaan.
+Parse immediate instruction - done by Khoi, Sofiya, Hoomaan.
+Parse directive - done by Khoi, Sofiya, Hoomaan.
+Parse comment - done by Khoi, Sofiya, Hoomaan.

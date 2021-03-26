@@ -1,0 +1,17 @@
+13 March 2021
+Epic 5: Report errors to the error reporter. - not done
+Save error and token position. - not done
+Record error in list. - not done
+Print each line with error. - not done
+
+22 March 2021
+Epic 5: Report errors to the error reporter. - Done by Ryan.
+Save error and token position. - Done by Ryan.
+Record error in list. - Done by Ryan.
+Print each line with error. - not done
+
+24 March 2021
+Epic 5: Report errors to the error reporter. - Done by Ryan.
+Save error and token position. - Done by Ryan.
+Record error in list. - Done by Ryan
+Print each line with error. - Done by Sofiya, Khoi, Hoomaan.
