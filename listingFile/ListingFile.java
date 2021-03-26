@@ -15,7 +15,7 @@ import token.TokenType;
 public class ListingFile {
 	public static void buildListingFile() {
 		try {
-			File listingFile = new File("TestImmediate.lst");
+			File listingFile = new File("TestInherentMnemonics.lst");
 			if (listingFile.createNewFile()) {
 				System.out.println("File created: " + listingFile.getName());
 			} else {
@@ -37,14 +37,20 @@ public class ListingFile {
 		}
 		Iterator<Token> iterator=mnemonic.iterator();
 		try {
+			boolean hadMnemonic = false;
 			FileWriter listingFile = new FileWriter("TestInherentMnemonics.lst");
-			listingFile.write("Line\tAddr\tCode\tLabel\tMne\tOperand\tComments\n"); // headers
+			listingFile.write("Line\tAddr\tCode\tLabel\tMne\tOperand\tComments\n\n"); // headers
 			while (iterator.hasNext()) {
+				String hexAddr;
+				String hexAddr4;
 				Token nextMnemonic = iterator.next(); // next Mnemonic
+				if (nextMnemonic.getCode().equals(TokenType.EOF)) {
+					break;
+				}
 				if(nextMnemonic.getName().equals("EOL")) {
 					listingFile.write(line++ + "\t");
-					String hexAddr = Integer.toHexString(addr++).toUpperCase(); // address in Hex
-					String hexAddr4 = "";
+					hexAddr = Integer.toHexString(--addr).toUpperCase(); // address in Hex
+					hexAddr4 = "";
 					for (int i = hexAddr.length(); i < 4; i++) { // address in 0000 format
 						hexAddr4 += "0";
 					}
@@ -54,8 +60,8 @@ public class ListingFile {
 					continue;
 				}
 				listingFile.write(line++ + "\t");
-				String hexAddr = Integer.toHexString(addr++).toUpperCase(); // address in Hex
-				String hexAddr4 = "";
+				hexAddr = Integer.toHexString(addr++).toUpperCase(); // address in Hex
+				hexAddr4 = "";
 				for (int i = hexAddr.length(); i < 4; i++) { // address in 0000 format
 					hexAddr4 += "0";
 				}
