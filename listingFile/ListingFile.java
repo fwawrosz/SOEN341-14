@@ -79,19 +79,6 @@ public class ListingFile {
 					listingFile.write("\t" + nextMnemonic.getName());
 					nextMnemonic=iterator.next();
 				}
-//				listingFile.write("\t" + nextMnemonic.getName());
-//				if(iterator.hasNext()) {nextMnemonic=iterator.next();
-//				listingFile.write("\t" + nextMnemonic.getName());}
-//				if(iterator.hasNext()) {nextMnemonic=iterator.next();
-//				listingFile.write("\t" + nextMnemonic.getName());}
-////				if(iterator.hasNext()) {
-////					nextMnemonic = iterator.next();
-////					while(!nextMnemonic.getName().equals("EOL")) {
-////						listingFile.write("\t" + nextMnemonic.getName()); // label ------ to be added
-////						//else break;
-////					}
-////				}
-//				
 //				// Operand ------ to be added
 //				// comment ------ to be added
 			}
