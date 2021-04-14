@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import parsing.LineStatements;
 import parsing.Parser;
 import reader.Scanner;
 import reader.SrcReader;
@@ -21,14 +22,14 @@ class TestJunit {
 	void reader() {
 		
 		//Test reader class
-		assertEquals(new SrcReader().doesFileOpen("TestInherentMnemonics.asm"),"File opens succesfully.");
+		assertEquals(new SrcReader().doesFileOpen("TestImmediate.asm"),"File opens succesfully.");
   
 	}
 	
 	@Test
 	void scannerToken() {
 		//Test Scanners Token List
-		assertEquals(new Scanner().getTokenAt(0).toString(),"[halt(1,0)=Mnemonic]");
+		assertEquals(new Scanner("TestImmediate.asm").getTokenAt(3).getName(),"enter.u5");
 	}
 	
 	@Test
@@ -57,17 +58,36 @@ class TestJunit {
         assertEquals(new Mnemonic("halt", 0x00).toString(),"Mnemonic(halt, 0)");
 	}
 	
+	
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
 	@Test
 	void parser() {
 		//Test Parser
 	    
-        Parser parser1 = new Parser();
-	    List<String> result;
-		result = parser1.ParseThis(new Scanner().getTokenList());
+		Parser parser1 = new Parser();
+		List<LineStatements> result = parser1.ParseFile();
 		
-		assertEquals(result.toString(), "[Mnemonic, halt, EOL, EOL, Mnemonic, pop, EOL, EOL, Mnemonic, dup, EOL, EOL, Mnemonic, exit, EOL, EOL, Mnemonic, ret, EOL, EOL, Mnemonic, not, EOL, EOL, Mnemonic, and, EOL, EOL, Mnemonic, or, EOL, EOL, Mnemonic, xor, EOL, EOL, Mnemonic, neg, EOL, EOL, Mnemonic, inc, EOL, EOL, Mnemonic, dec, EOL, EOL, Mnemonic, add, EOL, EOL, Mnemonic, sub, EOL, EOL, Mnemonic, mul, EOL, EOL, Mnemonic, div, EOL, EOL, Mnemonic, rem, EOL, EOL, Mnemonic, shl, EOL, EOL, Mnemonic, shr, EOL, EOL, Mnemonic, teq, EOL, EOL, Mnemonic, tne, EOL, EOL, Mnemonic, tlt, EOL, EOL, Mnemonic, tgt, EOL, EOL, Mnemonic, tle, EOL, EOL, Mnemonic, tge, EOL, EOL, Mnemonic, halt, EOL, EOL, EOF, EOF]");
+		assertEquals(result.get(0).toString(), "LineStatements [instr=null, label=null, mnemonic=null, comment=[; TestImmediate.asm - Test immediate instructions.\n"
+				+ "(0,0)=Comment], operand=null, directive=null, number=null] ");
 	}
+	*/
 
-}
+
 
 

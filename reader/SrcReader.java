@@ -14,11 +14,14 @@ public class SrcReader implements ISrcReader {
 	public FileInputStream ReadSourceFile(String filename)  {
 		
 		File srcFile = new File(filename); // Read the file
+		
+		
 		if (!srcFile.canRead()) {
 			System.out.println("Cannot open source file : " + srcFile.getName());
 			System.out.println("System will now exit");
 			System.exit(0);
 		}
+		
 		
 		try { 
 		 src = new FileInputStream(srcFile);

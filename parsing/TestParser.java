@@ -16,6 +16,6 @@ public class TestParser {
 	 List<LineStatements> result = parser1.ParseFile();
 	
 	 System.out.println("Test Parser");
-     System.out.println(result.get(0).toString());
+     System.out.println(result.get(3).toString());
 }
 }

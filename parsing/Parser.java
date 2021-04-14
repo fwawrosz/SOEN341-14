@@ -20,7 +20,7 @@ private List<LineStatements> InterR = new ArrayList<LineStatements>();
 private LineStatements linestatement = new LineStatements();
 private Symbol symbolTable = new Symbol();
 private Hashtable<String, Mnemonic> ht = symbolTable.getSymbolTable();
-Scanner scr = new Scanner();
+Scanner scr = new Scanner("TestImmediate.asm");
 private int counter = 0;
 
 

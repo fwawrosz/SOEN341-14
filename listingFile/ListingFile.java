@@ -27,12 +27,12 @@ public class ListingFile {
 		}
 	}
 
-	public static void writeListingFile() {
+	public static void writeListingFile(String filename) {
 		ListingFile.buildListingFile();
 		
 		int line = 1; // line number
 		int addr = 0; // address in decimal
-		Scanner scanMnemonics = new Scanner();
+		Scanner scanMnemonics = new Scanner(filename);
 		ArrayList<Token> mnemonic=new ArrayList<Token>(); //scanMnemonics.getTokenList().iterator();
 		for(int i=0;i<scanMnemonics.getNumberOfToken();i++) {
 			mnemonic.add(scanMnemonics.getTokenAt(i));

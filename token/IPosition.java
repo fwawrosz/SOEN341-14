@@ -4,4 +4,8 @@ package token;
 public interface IPosition {
     int    getLineNumber();
     int    getColumnNumber();
+    void   incLineNumber();
+    void   incColumnNumber();
+    void   resetLineNumber();
+    void   resetColumnNumber();
 }
