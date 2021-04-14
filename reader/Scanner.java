@@ -21,6 +21,13 @@ public class Scanner implements IScanner {
 	private Position pos;	//variable keeping track of current position
 	private boolean insidecstring = false; //flag that determines whether we're inside a cstring
 	
+	private String filename;
+	
+	public Scanner(String name) {
+		this.filename = name;
+	}
+	
+	
 	public int getEOF() {return Scanner.EOF;}
 	
 	private void createMnemonicList(FileInputStream reader){
@@ -33,6 +40,7 @@ public class Scanner implements IScanner {
 		boolean is_number = false;
 		boolean is_directive = false;
 		boolean is_directiveoperand = false;
+		boolean is_dash = false;
 		
 		try {
 			
@@ -163,7 +171,7 @@ public class Scanner implements IScanner {
 				
 				//determine what to do based on characters
 				//skip whitespaces
-				else if(((char) i == ' ' || (char) i == '\t'))
+				else if(((char) i == ' ' || (char) i == '\t' || (char)i == '\r'))
 				{
 					
 						if(this.tokenName.length()!=0) {
@@ -198,6 +206,7 @@ public class Scanner implements IScanner {
 					is_mnemonic = false;
 					is_number = false;
 					is_directive = false;
+					is_dash = false;
 					
 					continue;	//move on, nothing else to do
 				}
@@ -211,9 +220,16 @@ public class Scanner implements IScanner {
 				
 				
 				//for numbers: parse as token
-				else if ( (Character.isDigit((char)i) || is_number) && !(is_directiveoperand) && !(is_directive))
+				else if ( (Character.isDigit((char)i) || is_number || (char)i == '-') && !(is_directiveoperand) && !(is_directive))
 				{
+					//check to make sure there's only one dash at the beginning
+					//if we encounter a second dash, throw an invalid character error
+					if((char)i == '-' && is_dash)
+					{
+						errrep.record(new ErrorMessage("filename", new Position(pos.getLineNumber(), pos.getColumnNumber()), "Invalid character."));
+					}
 					is_number = true;
+					is_dash = true;
 					this.tokenName.append((char) i);
 				} 
 				
@@ -278,9 +294,8 @@ public class Scanner implements IScanner {
 	private void createTokenList(){
 		
 		SrcReader readFile = new SrcReader();
-		createMnemonicList(readFile.ReadSourceFile("TestImmediate.asm"));
+		createMnemonicList(readFile.ReadSourceFile(this.filename));
 		readFile.closeStream();
-		
 	}
 	
 	private ArrayList<Token> getTokenList(){ //should set this to private
