@@ -1,14 +1,16 @@
 package cma;
 
 import listingFile.ListingFile;
+import reader.SrcReader;
 
 public class cma {
 
 	public static void main(String[] args) {
 		
+		String filename = "";
 		
 		if(args.length == 0) {
-			System.out.println("dne");
+			System.out.println("Add option or file name.");
 		}else {
 		
 		
@@ -24,12 +26,28 @@ public class cma {
 			
 			case "-listing":
 			case "-l":	
+				if(args.length > 1 && !args[1].isEmpty() && args[1].contains(".asm")) {
+					
+						filename = args[1];
+						new SrcReader().doesFileOpen(filename);
+						ListingFile.writeListingFile(filename);
 						
-						ListingFile.writeListingFile();
-						break;
-			
+				}else {
+					System.out.println("You must provide a .asm file name with the option -listing.");
+				}		
+				break;
 			case "-verbose":
-			case "-v":	System.out.println("verbose option is being implemented");break;
+			case "-v":
+				
+				if(args.length > 1 && !args[1].isEmpty() && args[1].contains(".asm")) {
+					
+					filename = args[1];
+					new SrcReader().doesFileOpen(filename);
+					ListingFile.writeListingFile(filename);
+			}else {
+				System.out.println("You must provide a .asm file name with the option -verbose.");
+			}
+			break;
 			
 			default:
 				if(args[0].contains(".asm")) {
