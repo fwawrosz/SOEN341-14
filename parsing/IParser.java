@@ -16,5 +16,5 @@ public interface IParser{
 	private void ParseThis(Token currenntToken) {
 	}
 
-	public List<LineStatements> ParseFile();
+	public IntermatidateRepresentation ParseFile(String name);
 }

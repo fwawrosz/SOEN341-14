@@ -16,15 +16,17 @@ import reader.Scanner;
 
 public class Parser implements IParser {
 public static ErrorReporter errrep = new ErrorReporter();
-private List<LineStatements> InterR = new ArrayList<LineStatements>();
+private IntermatidateRepresentation InterR = new IntermatidateRepresentation();
 private LineStatements linestatement = new LineStatements();
 private Symbol symbolTable = new Symbol();
 private Hashtable<String, Mnemonic> ht = symbolTable.getSymbolTable();
-Scanner scr = new Scanner("TestImmediate.asm");
+private Scanner scr;
 private int counter = 0;
 
 
-public List<LineStatements> ParseFile(){
+public IntermatidateRepresentation ParseFile(String name){
+
+	scr = new Scanner(name);
 	int size = scr.getNumberOfToken();
 	
 	for(;counter<size; counter++) {
@@ -46,8 +48,11 @@ private void ParseThis(Token currentToken){
 				if(ht.get(currentToken.getName()) == null) {
 					if(scr.getTokenAt(++counter2).getCode() == TokenType.Number) {
 						linestatement.setNumber(scr.getTokenAt(counter2));
-					}else {
-						errrep.record(new ErrorMessage("This immediate instruction must have an operand field."));
+					}else 
+                    {
+                        ErrorMessage errMessage = new ErrorMessage("This immediate instruction must have an operand field.", currentToken.getPosition(), "TestImmediate.asm");
+						errrep.record(errMessage);
+                        System.out.println(errMessage);
 					}
 				}	
 				counter = counter2;
@@ -62,7 +67,7 @@ private void ParseThis(Token currentToken){
 				linestatement.setDirective(currentToken);
 				break;
 			case EOL:
-				InterR.add(linestatement);
+				InterR.addNewLineStatement(linestatement);
 				linestatement = new LineStatements();
 				break;
 		}		

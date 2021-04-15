@@ -13,9 +13,9 @@ public class TestParser {
 		  
 	
 	 Parser parser1 = new Parser();
-	 List<LineStatements> result = parser1.ParseFile();
+	 IntermatidateRepresentation result = parser1.ParseFile("TestImmediate.asm");
 	
 	 System.out.println("Test Parser");
-     System.out.println(result.get(3).toString());
+     System.out.println(result.getIR().get(3).toString());
 }
 }
