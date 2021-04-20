@@ -1,7 +1,12 @@
 package cma;
 
+import java.util.Scanner;
+
 import listingFile.ListingFile;
 import reader.SrcReader;
+import symbolTable.Symbol;
+
+
 
 public class cma {
 
@@ -31,6 +36,7 @@ public class cma {
 						filename = args[1];
 						new SrcReader().doesFileOpen(filename);
 						ListingFile.writeListingFile(filename);
+						//.generateExe()
 						
 				}else {
 					System.out.println("You must provide a .asm file name with the option -listing.");
@@ -43,7 +49,32 @@ public class cma {
 					
 					filename = args[1];
 					new SrcReader().doesFileOpen(filename);
+					
+					//provide useful information
+					System.out.println("Your file "+filename+" is ready for processing");
+					
+					Scanner key = new Scanner(System.in);
+					
+					System.out.print("Enter yes, if this is the file you want to process: ");
+					String response = key.nextLine();
+					
+					if(!(response.equalsIgnoreCase("yes"))) {
+						System.out.println("Run the cross-assembler using the correct file.");
+						System.exit(0);
+					}
+					
+					//beginning of placeholder
+					System.out.println("\nThe following Symbol Table is being used:");
+					System.out.println("---------------------------------------------------------");
+					new Symbol().PrintTable();
+					System.out.println("---------------------------------------------------------\n");
+					//end of placeholder
+					
+					System.out.println(filename+" is beind parsed...");
 					ListingFile.writeListingFile(filename);
+					System.out.println("Generating executable...");
+					//.generateExe()
+					
 			}else {
 				System.out.println("You must provide a .asm file name with the option -verbose.");
 			}
@@ -52,6 +83,7 @@ public class cma {
 			default:
 				if(args[0].contains(".asm")) {
 					System.out.println(args[0].substring(0,args[0].indexOf(".asm")));
+					//.generateExe()
 				}else {
 					System.out.println("This option does not exist");
 				}

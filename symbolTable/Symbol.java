@@ -53,4 +53,9 @@ public class Symbol implements ISymbol {
 		return this.symbolTable.get(name);
 	}
 	
+	public void PrintTable() {
+		this.symbolTable.entrySet().forEach(entry -> {
+			System.out.println(entry.getKey() +"->"+entry.getValue());});
+	}
+	
 }
