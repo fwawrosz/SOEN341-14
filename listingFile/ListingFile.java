@@ -15,7 +15,7 @@ import token.TokenType;
 public class ListingFile {
 	public static void buildListingFile() {
 		try {
-			File listingFile = new File("TestInherentMnemonics.lst");
+			File listingFile = new File("TestImmediate.lst");
 			if (listingFile.createNewFile()) {
 				System.out.println("File created: " + listingFile.getName());
 			} else {
@@ -40,7 +40,7 @@ public class ListingFile {
 		Iterator<Token> iterator=mnemonic.iterator();
 		try {
 			boolean hadMnemonic = false;
-			FileWriter listingFile = new FileWriter("TestInherentMnemonics.lst");
+			FileWriter listingFile = new FileWriter("TestImmediate.lst");
 			listingFile.write("Line\tAddr\tCode\tLabel\tMne\tOperand\tComments\n\n"); // headers
 			while (iterator.hasNext()) {
 				String hexAddr;
